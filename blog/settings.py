@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com',
+ALLOWED_HOSTS = ['frirsta-blog-53010ec1265c.herokuapp.com',
                  'localhost', '127.0.0.1']
 
 
@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
-    "https://frirsta-blog-2b4804111ee0.herokuapp.com",
+    "https://frirsta-blog-53010ec1265c.herokuapp.com",
     "http://localhost:8000",
 ]
 
