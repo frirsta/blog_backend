@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = ['frirsta-blog.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com/', 'localhost', '127.0.0.1']
 
 
 
