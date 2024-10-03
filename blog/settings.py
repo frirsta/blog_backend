@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import dj_database_url
-import os
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,8 +27,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com/', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com/',
+                 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -41,10 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'posts',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,7 +55,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ALLOWED_ORIGINS = [
+    "https://'frirsta-blog-2b4804111ee0.herokuapp.com/",
+    "http://localhost:8000",
+]
 ROOT_URLCONF = 'blog.urls'
 
 TEMPLATES = [
@@ -83,8 +87,6 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
-
-
 
 
 # Password validation
