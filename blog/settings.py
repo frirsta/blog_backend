@@ -28,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['frirsta-blog.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 
