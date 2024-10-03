@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s_l$u=@nz+sr-15s-oeb*kkzw9v)o%r(j(eug9ge=)q)3jbk-s'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['your-heroku-app-name.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['frirsta-blog-2b4804111ee0.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 
@@ -81,11 +81,9 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
 
-DATABASES['default']['CONN_MAX_AGE'] = 500
-DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 
 
