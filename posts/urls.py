@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import PostListCreate, PostDetail
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import PostViewSet
+
+router = DefaultRouter()
+router.register('', PostViewSet, basename='post')
 
 urlpatterns = [
-    path('', PostListCreate.as_view(), name='post-list-create'),  # For listing and creating posts
-    path('<int:pk>/', PostDetail.as_view(), name='post-detail'),   # For retrieving, updating, and deleting a post
+    path('', include(router.urls)),
 ]

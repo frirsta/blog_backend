@@ -18,8 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+    TokenBlacklistView
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Login
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Get a new access token
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),  # Logout
     path('posts/', include('posts.urls')),
+    path('profiles/', include('profiles.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
