@@ -3,7 +3,7 @@ from .models import Post
 from .serializers import PostSerializer
 
 
-class PostListView(generics.ListCreateAPIView):
+class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
