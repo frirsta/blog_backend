@@ -5,13 +5,19 @@ from .models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='user.username')
+    is_owner = serializers.SerializerMethodField()
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+
+    def get_is_owner(self, obj):
+        request = self.context.get('request')
+        return obj.user == request.user
 
     class Meta:
         model = Profile
         fields = ['username', 'email', 'bio',
-                  'profile_picture', 'location', 'website']
+                  'profile_picture', 'location', 'website', 'id', 'user', 'cover_picture', 'owner', 'is_owner']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
