@@ -5,7 +5,8 @@ from .models import Post
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='author.username')
     is_owner = serializers.SerializerMethodField()
-
+    profile_picture = serializers.SerializerMethodField()
+    
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return obj.author == request.user
