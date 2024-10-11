@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(
-        upload_to='profile_pictures/', blank=True, null=True, default='profile_pictures/default.png')
-    cover_picture = models.ImageField(
-        upload_to='cover_pictures/', blank=True, null=True, default='cover_pictures/default.png')
+    profile_picture = CloudinaryField(
+        'image', blank=True, null=True, default='blog_media/profile_pictures/default.png')
+    cover_picture = CloudinaryField(
+        'image', blank=True, null=True, default='blog_media/cover_pictures/default.png')
     location = models.CharField(max_length=100, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
 

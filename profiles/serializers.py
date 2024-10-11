@@ -9,6 +9,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    profile_picture = serializers.SerializerMethodField()
+    cover_picture = serializers.SerializerMethodField()
+
+    def get_profile_picture(self, obj):
+        return obj.profile_picture.url if obj.profile_picture else 'https://res.cloudinary.com/ddms7cvqu/image/upload/v1/blog_media/profile_pictures/default.png'
+
+    def get_cover_picture(self, obj):
+        return obj.cover_picture.url if obj.cover_picture else 'https://res.cloudinary.com/ddms7cvqu/image/upload/v1/blog_media/cover_pictures/default.png'
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
