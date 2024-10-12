@@ -39,12 +39,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if len(value) < 3:
             raise ValidationError(
                 "Username must be at least 3 characters long.")
-        if User.objects.filter(username=value).exists():
+
+        # Make the check case-insensitive
+        if User.objects.filter(username__iexact=value).exists():
             raise ValidationError("Username already exists.")
+
         return value
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        if User.objects.filter(email__iexact=value).exists():
             raise ValidationError("Email already exists.")
         return value
 
