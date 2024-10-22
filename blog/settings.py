@@ -98,6 +98,11 @@ CORS_ALLOWED_ORIGINS = [
     "https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com",  # Production URL
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",  # React development server
+    "https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com",  # Production URL
+]
+
 ROOT_URLCONF = 'blog.urls'
 
 TEMPLATES = [
