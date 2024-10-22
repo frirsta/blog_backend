@@ -62,3 +62,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user)
 
         return user
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
