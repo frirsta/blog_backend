@@ -95,8 +95,10 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
+    "http://127.0.0.1:3000",  # Localhost with IP address
     "https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com",  # Production URL
 ]
+
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",  # React development server
