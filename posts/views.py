@@ -1,6 +1,7 @@
 from rest_framework import permissions, generics
-from django.contrib.auth.models import User
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from .models import Post
 from .serializers import PostSerializer
 
@@ -9,9 +10,14 @@ class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        try:
+            serializer.save(author=self.request.user)
+        except Exception as e:
+            print(f"Error while saving post: {str(e)}")
+            raise
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
