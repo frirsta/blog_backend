@@ -4,28 +4,49 @@ from rest_framework import serializers
 from .models import Profile
 
 
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from rest_framework import serializers
+from .models import Profile
+
 class ProfileSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='user.username')
     is_owner = serializers.SerializerMethodField()
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
-    profile_picture = serializers.SerializerMethodField()
-    cover_picture = serializers.SerializerMethodField()
-
-    def get_profile_picture(self, obj):
-        return obj.profile_picture.url if obj.profile_picture else 'https://res.cloudinary.com/ddms7cvqu/image/upload/v1/blog_media/profile_pictures/default.png'
-
-    def get_cover_picture(self, obj):
-        return obj.cover_picture.url if obj.cover_picture else 'https://res.cloudinary.com/ddms7cvqu/image/upload/v1/blog_media/cover_pictures/default.png'
+    profile_picture = serializers.ImageField(allow_null=True, required=False)
+    cover_picture = serializers.ImageField(allow_null=True, required=False)
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return obj.user == request.user
 
+    def validate_website(self, value):
+        # Add any additional validation for website if needed
+        return value
+
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        
+        # Update the User model fields (if any)
+        user = instance.user
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        # Update the Profile fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        return instance
+
     class Meta:
         model = Profile
-        fields = ['username', 'email', 'bio',
-                  'profile_picture', 'location', 'website', 'id', 'user', 'cover_picture', 'owner', 'is_owner']
+        fields = [
+            'username', 'email', 'bio', 'profile_picture', 'cover_picture', 
+            'location', 'website', 'id', 'user', 'owner', 'is_owner'
+        ]
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
