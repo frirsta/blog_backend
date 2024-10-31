@@ -1,13 +1,14 @@
 from django.db import IntegrityError
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
-from blog.permissions import IsAuthorOrReadOnly
-from .models import Follow
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from blog.permissions import IsFollowerOrReadOnly
 from .serializers import FollowSerializer
+from .models import Follow
 
 
 class FollowListView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
 
@@ -19,7 +20,7 @@ class FollowListView(generics.ListCreateAPIView):
 
 
 class FollowDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsFollowerOrReadOnly]
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     lookup_field = 'pk'
