@@ -29,10 +29,14 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Login
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Get a new access token
+    path('api/token/', TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),  # Login
+    path('api/token/refresh/', TokenRefreshView.as_view(),
+         name='token_refresh'),  # Get a new access token
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),  # Logout
+    path('api/token/blacklist/', TokenBlacklistView.as_view(),
+         name='token_blacklist'),  # Logout
     path('posts/', include('posts.urls')),
     path('profiles/', include('profiles.urls')),
+    path('follows/', include('follows.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
