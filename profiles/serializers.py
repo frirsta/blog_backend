@@ -4,11 +4,6 @@ from rest_framework import serializers
 from .models import Profile
 
 
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
-from rest_framework import serializers
-from .models import Profile
-
 class ProfileSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='user.username')
     is_owner = serializers.SerializerMethodField()
@@ -16,10 +11,17 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
     profile_picture = serializers.ImageField(allow_null=True, required=False)
     cover_picture = serializers.ImageField(allow_null=True, required=False)
+    is_following = serializers.SerializerMethodField()
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return obj.user == request.user
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.followers.filter(id=request.user.id).exists()
+        return False
 
     def validate_website(self, value):
         # Add any additional validation for website if needed
@@ -27,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
-        
+
         # Update the User model fields (if any)
         user = instance.user
         for attr, value in user_data.items():
@@ -44,7 +46,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'username', 'email', 'bio', 'profile_picture', 'cover_picture', 
+            'username', 'email', 'bio', 'profile_picture', 'cover_picture',
             'location', 'website', 'id', 'user', 'owner', 'is_owner'
         ]
 
