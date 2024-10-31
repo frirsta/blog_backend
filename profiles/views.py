@@ -18,14 +18,13 @@ from .models import Profile
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
-    permission_classes = [AllowAny]  # Allow any user to register
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
 
-            # Generate JWT token upon successful registration
             refresh = RefreshToken.for_user(user)
             access_token = refresh.access_token
 
@@ -42,23 +41,31 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
+
     def get_object(self):
         user_id = self.kwargs.get('user_id')
-
-        if user_id is None:
-            return self.request.user.profile
-
-        user = get_object_or_404(User, id=user_id)
-        return user.profile
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+            return user.profile
+        return self.request.user.profile
 
     def update(self, request, *args, **kwargs):
         user_id = self.kwargs.get('user_id')
-
-        if user_id is not None and user_id != str(request.user.id):
+        if user_id and user_id != str(request.user.id):
             raise PermissionDenied(
                 "You do not have permission to edit this profile.")
-
         return super().update(request, *args, **kwargs)
+
+
+class ProfileListView(generics.ListAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [AllowAny]
+    queryset = Profile.objects.all()
+
+    def get_queryset(self):
+        return Profile.objects.all()
 
 
 class AccountDeleteView(generics.DestroyAPIView):
@@ -68,7 +75,6 @@ class AccountDeleteView(generics.DestroyAPIView):
         user = request.user
         Profile.objects.filter(user=user).delete()
         user.delete()
-
         return Response({"detail": "Account deleted successfully."}, status=status.HTTP_200_OK)
 
 
@@ -137,7 +143,7 @@ class ChangePasswordView(APIView):
 
         if not user.check_password(old_password):
             return Response({"detail": "Old password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         user.set_password(new_password)
         user.save()
 

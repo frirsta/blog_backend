@@ -7,36 +7,36 @@ from .models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='user.username')
     is_owner = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     profile_picture = serializers.ImageField(allow_null=True, required=False)
     cover_picture = serializers.ImageField(allow_null=True, required=False)
-    is_following = serializers.SerializerMethodField()
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
-        return obj.user == request.user
+        if request and hasattr(request, 'user'):
+            return obj.user == request.user
+        return False
 
     def get_is_following(self, obj):
         request = self.context.get('request')
-        if request and request.user.is_authenticated:
-            return obj.followers.filter(id=request.user.id).exists()
+        if request and hasattr(request, 'user'):
+            if request.user.is_authenticated:
+                return obj.user.followers.filter(follower=request.user).exists()
         return False
 
     def validate_website(self, value):
-        # Add any additional validation for website if needed
         return value
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
 
-        # Update the User model fields (if any)
         user = instance.user
         for attr, value in user_data.items():
             setattr(user, attr, value)
         user.save()
 
-        # Update the Profile fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -47,7 +47,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'username', 'email', 'bio', 'profile_picture', 'cover_picture',
-            'location', 'website', 'id', 'user', 'owner', 'is_owner'
+            'location', 'website', 'id', 'user', 'owner', 'is_owner', 'is_following'
         ]
 
 
@@ -56,14 +56,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'email', 'password']
 
     def validate_username(self, value):
         if len(value) < 3:
             raise ValidationError(
                 "Username must be at least 3 characters long.")
 
-        # Make the check case-insensitive
         if User.objects.filter(username__iexact=value).exists():
             raise ValidationError("Username already exists.")
 
