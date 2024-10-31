@@ -2,6 +2,7 @@ from rest_framework import permissions, generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from blog.permissions import IsAuthorOrReadOnly
 from .models import Post
 from .serializers import PostSerializer
 
@@ -23,7 +24,7 @@ class PostListCreateView(generics.ListCreateAPIView):
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
 
 
 class UserPostListView(generics.ListAPIView):
