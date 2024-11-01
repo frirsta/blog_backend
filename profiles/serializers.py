@@ -9,14 +9,16 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     is_owner = serializers.SerializerMethodField()
     is_following = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
+    followers_count = serializers.ReadOnlyField()
+    following = serializers.SerializerMethodField()
+    following_id = serializers.SerializerMethodField()
+    following_count = serializers.ReadOnlyField()
+    posts_count = serializers.ReadOnlyField()
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     profile_picture = serializers.ImageField(allow_null=True, required=False)
     cover_picture = serializers.ImageField(allow_null=True, required=False)
-    following_id = serializers.SerializerMethodField()
-    following_count = serializers.ReadOnlyField()
-    followers_count = serializers.ReadOnlyField()
-    posts_count = serializers.ReadOnlyField()
 
     def get_is_owner(self, obj):
         request = self.context['request']
@@ -27,6 +29,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             return Follow.objects.filter(follower=user, following=obj.user).exists()
         return False
+
+    def get_followers(self, obj):
+        followers = Follow.objects.filter(
+            following=obj.user)  # Users who follow this user
+        return [{'id': follow.follower.id, 'username': follow.follower.username} for follow in followers]
+
+    def get_following(self, obj):
+        following = Follow.objects.filter(
+            follower=obj.user)  # Users this user is following
+        return [{'id': follow.following.id, 'username': follow.following.username} for follow in following]
 
     def get_following_count(self, obj):
         return Follow.objects.filter(follower=obj.user).count()
@@ -64,7 +76,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'username', 'email', 'bio', 'profile_picture', 'cover_picture',
             'location', 'website', 'id', 'user', 'is_owner', 'is_following',
-            'following_id', 'following_count', 'followers_count', 'posts_count', 'created_at', 'updated_at'
+            'following_id', 'following_count', 'followers_count', 'posts_count', 'created_at', 'updated_at', 'followers', 'following'
         ]
 
 
