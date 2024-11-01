@@ -12,6 +12,11 @@ class Profile(models.Model):
         'image', blank=True, null=True, default='blog_media/cover_pictures/default.png')
     location = models.CharField(max_length=100, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.user.username

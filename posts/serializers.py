@@ -11,10 +11,10 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'id', 'title', 'content', 'owner', 'is_owner',
-            'profile_picture', 'image', 'created_at', 'updated_at', 'author'
+            'profile_picture', 'image', 'created_at', 'updated_at'
         ]
         read_only_fields = ['owner', 'is_owner',
-                            'profile_picture', 'created_at', 'updated_at', 'author']
+                            'profile_picture', 'created_at', 'updated_at']
 
     def get_is_owner(self, obj):
         request = self.context.get('request')

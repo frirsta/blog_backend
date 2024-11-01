@@ -1,17 +1,18 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions, filters
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.shortcuts import get_object_or_404
-from django.utils.encoding import force_bytes
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_str
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
+from blog.permissions import IsAuthorOrReadOnly
 from .serializers import ProfileSerializer, UserRegistrationSerializer, PasswordResetSerializer
 from .models import Profile
 
@@ -37,45 +38,37 @@ class UserRegistrationView(generics.CreateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileDetailView(generics.RetrieveUpdateAPIView):
+class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthorOrReadOnly]
+    queryset = Profile.objects.annotate(
+        posts_count=Count('user__posts', distinct=True),
+        following_count=Count('user__following', distinct=True),
+        followers_count=Count('user__followers', distinct=True),
+    ).order_by('created_at')
 
-    def get_queryset(self):
-        return Profile.objects.filter(user=self.request.user)
-
-    def get_object(self):
-        user_id = self.kwargs.get('user_id')
-        if user_id:
-            user = get_object_or_404(User, id=user_id)
-            return user.profile
-        return self.request.user.profile
-
-    def update(self, request, *args, **kwargs):
-        user_id = self.kwargs.get('user_id')
-        if user_id and user_id != str(request.user.id):
+    def perform_destroy(self, instance):
+        if instance.user != self.request.user:
             raise PermissionDenied(
-                "You do not have permission to edit this profile.")
-        return super().update(request, *args, **kwargs)
+                "You do not have permission to delete this profile.")
+        user = instance.user
+        user.delete()
+        return Response({"detail": "Account deleted successfully."}, status=status.HTTP_200_OK)
 
 
 class ProfileListView(generics.ListAPIView):
     serializer_class = ProfileSerializer
-    permission_classes = [AllowAny]
-    queryset = Profile.objects.all()
-
-    def get_queryset(self):
-        return Profile.objects.all()
-
-
-class AccountDeleteView(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request, *args, **kwargs):
-        user = request.user
-        Profile.objects.filter(user=user).delete()
-        user.delete()
-        return Response({"detail": "Account deleted successfully."}, status=status.HTTP_200_OK)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Profile.objects.annotate(
+        posts_count=Count('user__posts', distinct=True),
+        following_count=Count('user__following', distinct=True),
+        followers_count=Count('user__followers', distinct=True),
+    ).order_by('created_at')
+    filter_backends = [filters.SearchFilter,
+                       filters.OrderingFilter, DjangoFilterBackend]
+    search_fields = ['user__username']
+    ordering_fields = ['created_at', 'posts_count',
+                       'following_count', 'followers_count']
 
 
 class PasswordResetAPIView(generics.GenericAPIView):
