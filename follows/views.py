@@ -18,7 +18,7 @@ class FollowListView(generics.ListCreateAPIView):
 
         if follower_id:
             queryset = queryset.filter(follower_id=follower_id)
-        elif following_id:
+        if following_id:
             queryset = queryset.filter(following_id=following_id)
 
         return queryset
