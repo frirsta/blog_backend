@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import FollowDetail, FollowListView
+from .views import FollowDetailView, FollowCreateView
 
 urlpatterns = [
-    path('<int:pk>/', FollowDetail.as_view(), name='follow-user'),
-    path('', FollowListView.as_view(), name='follow-list'),
+    path('<int:pk>/', FollowDetailView.as_view(), name='follow-user'),
+    path('', FollowCreateView.as_view(), name='follow-list'),
 ]

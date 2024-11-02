@@ -69,7 +69,10 @@ class ProfileListView(generics.ListAPIView):
     search_fields = ['user__username']
     ordering_fields = ['created_at', 'posts_count',
                        'following_count', 'followers_count']
-
+    filterset_fields = [
+        'user__following__following',  # Users they are following
+        'user__followers__follower',  # Users that follow them
+    ]
 
 class PasswordResetAPIView(generics.GenericAPIView):
     serializer_class = PasswordResetSerializer
