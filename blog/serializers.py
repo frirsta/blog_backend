@@ -1,26 +1,17 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
 from profiles.models import Profile
+from rest_framework import serializers
 
 class CurrentUserSerializer(serializers.ModelSerializer):
-    profile = serializers.SerializerMethodField()
-    email = serializers.EmailField(read_only=True)
+    profile_picture = serializers.ImageField(source='profile.profile_picture', read_only=True)
+    cover_picture = serializers.ImageField(source='profile.cover_picture', read_only=True)
+    bio = serializers.CharField(source='profile.bio', read_only=True)
+    location = serializers.CharField(source='profile.location', read_only=True)
+    website = serializers.URLField(source='profile.website', read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'profile']
-
-    def get_profile(self, obj):
-        try:
-            profile = Profile.objects.get(user=obj)
-            return {
-                'profile_picture': profile.profile_picture.url if profile.profile_picture else None,
-                'cover_picture': profile.cover_picture.url if profile.cover_picture else None,
-                'bio': profile.bio,
-                'location': profile.location,
-                'website': profile.website,
-                'followers_count': profile.followers.count(),
-                'following_count': profile.following.count()
-            }
-        except Profile.DoesNotExist:
-            return None
+        fields = [
+            'id', 'username', 'email', 'profile_picture', 'cover_picture',
+            'bio', 'location', 'website', 'first_name', 'last_name',
+        ]

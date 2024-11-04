@@ -29,7 +29,6 @@ from .views import CurrentUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('current-user/', CurrentUserView.as_view(), name='current-user'),
     path('api/token/', TokenObtainPairView.as_view(),
          name='token_obtain_pair'),  # Login
     path('api/token/refresh/', TokenRefreshView.as_view(),
@@ -37,6 +36,8 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/token/blacklist/', TokenBlacklistView.as_view(),
          name='token_blacklist'),  # Logout
+    path('current-user/', CurrentUserView.as_view(),
+         name='current-user'),  # Get current user
     path('posts/', include('posts.urls')),
     path('profiles/', include('profiles.urls')),
     path('follows/', include('follows.urls')),
