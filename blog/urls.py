@@ -24,11 +24,12 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
     TokenBlacklistView
 )
+from .views import CurrentUserView
 
 
 urlpatterns = [
-    path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
+    path('current-user/', CurrentUserView.as_view(), name='current-user'),
     path('api/token/', TokenObtainPairView.as_view(),
          name='token_obtain_pair'),  # Login
     path('api/token/refresh/', TokenRefreshView.as_view(),
