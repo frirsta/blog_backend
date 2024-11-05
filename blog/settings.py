@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'posts',
     'profiles',
     'follows',
+    'likes',
 ]
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 cloudinary.config(

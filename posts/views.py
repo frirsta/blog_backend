@@ -1,16 +1,23 @@
-from rest_framework import permissions, generics
+from rest_framework import permissions, generics, filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 from django.contrib.auth.models import User
+from django_filters.rest_framework import DjangoFilterBackend
 from blog.permissions import IsAuthorOrReadOnly
 from .models import Post
 from .serializers import PostSerializer
 
 
 class PostListCreateView(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.annotate(
+        likes_count=Count('likes', distinct=True)
+    ).order_by('-created_at')
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['likes__user__profile', 'author__profile']
+    ordering_fields = ['created_at', 'likes_count']
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
@@ -22,14 +29,19 @@ class PostListCreateView(generics.ListCreateAPIView):
 
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
+    queryset = Post.objects.annotate(
+        likes_count=Count('likes', distinct=True)
+    ).order_by('-created_at')
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['likes__user__profile', 'author__profile']
+    ordering_fields = ['created_at', 'likes_count']
 
 
 class UserPostListView(generics.ListAPIView):
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
