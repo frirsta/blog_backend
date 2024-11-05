@@ -9,12 +9,13 @@ class PostSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
     likes_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
+    comments_count = serializers.ReadOnlyField()
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'owner', 'is_owner',
-            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count'
+            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count'
         ]
         read_only_fields = ['owner', 'is_owner',
                             'profile_picture', 'created_at', 'updated_at']

@@ -5,19 +5,20 @@ from django.db.models import Count
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from blog.permissions import IsAuthorOrReadOnly
-from .models import Post
 from .serializers import PostSerializer
+from .models import Post
 
 
 class PostListCreateView(generics.ListCreateAPIView):
     queryset = Post.objects.annotate(
-        likes_count=Count('likes', distinct=True)
+        likes_count=Count('likes', distinct=True),
+        comments_count=Count('comment', distinct=True)
     ).order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['likes__user__profile', 'author__profile']
-    ordering_fields = ['created_at', 'likes_count']
+    ordering_fields = ['created_at', 'likes_count', 'comments_count']
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
@@ -32,11 +33,12 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthorOrReadOnly]
     queryset = Post.objects.annotate(
-        likes_count=Count('likes', distinct=True)
+        likes_count=Count('likes', distinct=True),
+        comments_count=Count('comment', distinct=True)
     ).order_by('-created_at')
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['likes__user__profile', 'author__profile']
-    ordering_fields = ['created_at', 'likes_count']
+    ordering_fields = ['created_at', 'likes_count', 'comments_count']
 
 
 class UserPostListView(generics.ListAPIView):
