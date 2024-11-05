@@ -21,6 +21,9 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_updated_at(self, obj):
         return naturaltime(obj.updated_at)
 
+    def get_profile_picture(self, obj):
+        return obj.user.profile.profile_picture.url
+
     class Meta:
         model = Comment
         fields = [
