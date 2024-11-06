@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Category
 from likes.models import Like
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -10,12 +16,15 @@ class PostSerializer(serializers.ModelSerializer):
     likes_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
+    category = CategorySerializer(many=True, read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), many=True, write_only=True, source='category')
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'owner', 'is_owner',
-            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count'
+            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count', 'category_id', 'category'
         ]
         read_only_fields = ['owner', 'is_owner',
                             'profile_picture', 'created_at', 'updated_at']
