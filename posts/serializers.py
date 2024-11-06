@@ -11,6 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='author.username')
+    owner_id = serializers.ReadOnlyField(source='author.id')
     is_owner = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     likes_id = serializers.SerializerMethodField()
@@ -23,15 +24,18 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'id', 'title', 'content', 'owner', 'is_owner',
+            'id', 'title', 'content', 'owner', 'owner_id', 'is_owner',
             'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count', 'category_id', 'category'
         ]
-        read_only_fields = ['owner', 'is_owner',
+        read_only_fields = ['owner', 'is_owner', 'owner_id',
                             'profile_picture', 'created_at', 'updated_at']
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
         return obj.author == request.user
+
+    def get_owner_id(self, obj):
+        return obj.author.id
 
     def get_profile_picture(self, obj):
         try:
