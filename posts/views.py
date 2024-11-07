@@ -19,14 +19,14 @@ class PostListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['likes__user__profile',
-                        'author__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
+                        'user__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
     ordering_fields = ['created_at', 'likes_count',
                        'comments_count', 'category__name']
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
         try:
-            serializer.save(author=self.request.user)
+            serializer.save(user=self.request.user)
         except Exception as e:
             print(f"Error while saving post: {str(e)}")
             raise
@@ -42,7 +42,7 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['likes__user__profile',
-                        'author__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
+                        'user__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
     ordering_fields = ['created_at', 'likes_count',
                        'comments_count', 'category__name']
 
@@ -54,7 +54,7 @@ class UserPostListView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
         user = get_object_or_404(User, pk=user_id)
-        return Post.objects.filter(author=user)
+        return Post.objects.filter(user=user)
 
 
 class CategoryListView(generics.ListAPIView):

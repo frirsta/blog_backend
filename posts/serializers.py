@@ -16,8 +16,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='author.username')
-    owner_id = serializers.ReadOnlyField(source='author.id')
+    user = serializers.ReadOnlyField(source='user.username')
+    owner_id = serializers.ReadOnlyField(source='user.id')
     is_owner = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     likes_id = serializers.SerializerMethodField()
@@ -34,22 +34,22 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'id', 'title', 'content', 'owner', 'owner_id', 'is_owner',
+            'id', 'title', 'content', 'user', 'owner_id', 'is_owner',
             'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count', 'category_id', 'category', 'tags_names', 'tags'
         ]
-        read_only_fields = ['owner', 'is_owner', 'owner_id',
+        read_only_fields = ['user', 'is_owner', 'owner_id',
                             'profile_picture', 'created_at', 'updated_at']
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
-        return obj.author == request.user
+        return obj.user == request.user
 
     def get_owner_id(self, obj):
-        return obj.author.id
+        return obj.user.id
 
     def get_profile_picture(self, obj):
         try:
-            return obj.author.profile.profile_picture.url
+            return obj.user.profile.profile_picture.url
         except AttributeError:
             return None
 
