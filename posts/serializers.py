@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from .models import Post, Category
+from .models import Post, Tag, Category
 from likes.models import Like
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
+        fields = ['id', 'name']
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
         fields = ['id', 'name']
 
 
@@ -20,12 +26,15 @@ class PostSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True, read_only=True)
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), many=True, write_only=True, source='category')
+    tags = TagSerializer(many=True, read_only=True)
+    tags_names = serializers.ListField(
+        child=serializers.CharField(), write_only=True)
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'owner', 'owner_id', 'is_owner',
-            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count', 'category_id', 'category'
+            'profile_picture', 'image', 'created_at', 'updated_at', 'likes_id', 'likes_count', 'comments_count', 'category_id', 'category', 'tags_names', 'tags'
         ]
         read_only_fields = ['owner', 'is_owner', 'owner_id',
                             'profile_picture', 'created_at', 'updated_at']
@@ -64,3 +73,21 @@ class PostSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("This field is required.")
         return value
+
+    def create(self, validated_data):
+        tags_names = validated_data.pop('tags_names', [])
+        post = super().create(validated_data)
+        for tag_name in tags_names:
+            tag, created = Tag.objects.get_or_create(name=tag_name)
+            post.tags.add(tag)
+        return post
+
+    def update(self, instance, validated_data):
+        tags_names = validated_data.pop('tags_names', [])
+        instance = super().update(instance, validated_data)
+        if tags_names:
+            instance.tags.clear()
+            for tag_name in tags_names:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                instance.tags.add(tag)
+        return instance

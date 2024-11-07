@@ -5,8 +5,8 @@ from django.db.models import Count
 from rest_framework import permissions, generics, filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from blog.permissions import IsAuthorOrReadOnly
-from .serializers import PostSerializer, CategorySerializer
-from .models import Post, Category
+from .serializers import PostSerializer, CategorySerializer, TagSerializer
+from .models import Post, Tag, Category
 
 
 class PostListCreateView(generics.ListCreateAPIView):
@@ -19,7 +19,7 @@ class PostListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['likes__user__profile',
-                        'author__profile', 'category', 'category__id', 'category__name']
+                        'author__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
     ordering_fields = ['created_at', 'likes_count',
                        'comments_count', 'category__name']
     parser_classes = (MultiPartParser, FormParser)
@@ -42,8 +42,9 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ['likes__user__profile',
-                        'author__profile', 'category', 'category__id']
-    ordering_fields = ['created_at', 'likes_count', 'comments_count']
+                        'author__profile', 'category', 'category__id', 'category__name', 'tags', 'tags__id']
+    ordering_fields = ['created_at', 'likes_count',
+                       'comments_count', 'category__name']
 
 
 class UserPostListView(generics.ListAPIView):
@@ -59,4 +60,10 @@ class UserPostListView(generics.ListAPIView):
 class CategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class TagListView(generics.ListAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
