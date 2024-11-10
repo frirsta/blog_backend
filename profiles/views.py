@@ -74,6 +74,7 @@ class ProfileListView(generics.ListAPIView):
         'user__followers__follower',  # Users that follow them
     ]
 
+
 class PasswordResetAPIView(generics.GenericAPIView):
     serializer_class = PasswordResetSerializer
     permission_classes = [AllowAny]
@@ -88,7 +89,7 @@ class PasswordResetAPIView(generics.GenericAPIView):
         if user:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_url = f"http://127.0.0.1:3000/password-reset-confirm/{
+            reset_url = f"https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com/password-reset-confirm/{
                 uid}/{token}/"
 
             context = {
