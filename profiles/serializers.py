@@ -88,21 +88,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
 
     def validate_username(self, value):
-        if len(value) < 3:
-            raise ValidationError(
-                "Username must be at least 3 characters long.")
-
         if User.objects.filter(username__iexact=value).exists():
             raise ValidationError("Username already exists.")
 
-        return value
+        return value.lower()
 
     def validate_email(self, value):
+        # Ensure email is unique case-insensitively
         if User.objects.filter(email__iexact=value).exists():
             raise ValidationError("Email already exists.")
         return value
 
     def create(self, validated_data):
+        validated_data['username'] = validated_data['username'].lower()
+
         user = User(
             username=validated_data['username'],
             email=validated_data['email'],
