@@ -24,7 +24,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
     TokenBlacklistView
 )
-from .views import CurrentUserView
+from .views import CurrentUserView, LogoutView
 
 
 urlpatterns = [
@@ -36,6 +36,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/token/blacklist/', TokenBlacklistView.as_view(),
          name='token_blacklist'),  # Logout
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('current-user/', CurrentUserView.as_view(),
          name='current-user'),  # Get current user
     path('posts/', include('posts.urls')),
