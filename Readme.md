@@ -6,12 +6,13 @@ This repository contains the backend of the blog project built with Django REST 
 
 - [Overview](#overview)
 - [Features](#features)
+- [Project Management](#project-management)
 - [Technologies](#technologies)
 - [Setup](#setup)
 
-[**Frontend Repository**](https://github.com/frirsta/blog_frontend)
-
 [**Live Link**](https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com/login)
+
+[**Frontend Repository**](https://github.com/frirsta/blog_frontend)
 
 # Features
 
@@ -20,6 +21,22 @@ This repository contains the backend of the blog project built with Django REST 
 - Comments and Likes: Users can like posts and comment on them.
 - Social Features: Users can follow/unfollow others and see followers and following lists.
 - Media Handling: Supports image upload through Cloudinary.
+
+# Project Management
+
+I have used Github issues and Github project board for project management.
+
+### Agile methodology
+
+- **Must Have** - Are the issues that have to be top priority.
+- **Should have** - Are second priority.
+- **Could have** - Third priority.
+- **Won't have** - Will not be in the project.
+
+  The Won't have label is for long term use in the project and has not been
+
+<img src="./assets/project_board.png">
+<img src="./assets/issues.png">
 
 # Technologies
 
@@ -39,6 +56,8 @@ This repository contains the backend of the blog project built with Django REST 
 ## Email Services
 
 - Brevo
+
+<img src="./assets//technologies.png">
 
 # Setup
 
