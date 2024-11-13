@@ -16,11 +16,43 @@ This repository contains the backend of the blog project built with Django REST 
 
 # Features
 
-- User Management: User signup, login, and profile management with case-insensitive usernames.
-- Blog Posts: Users can create, edit, and delete their blog posts, with support for categories and tags.
-- Comments and Likes: Users can like posts and comment on them.
-- Social Features: Users can follow/unfollow others and see followers and following lists.
-- Media Handling: Supports image upload through Cloudinary.
+### Authentication & Authorization
+
+- JWT Authentication with Simple JWT.
+
+- Login, Logout, and Token Refresh are implemented.
+
+- Tokens are rotated and blacklisted after use for added security.
+
+- The authentication backend uses case-insensitive login.
+
+### User Profiles:
+
+- **User Registration:** Users can create an account.
+
+- **Profile Management:** Users can update their profile details, including profile picture, cover image, bio, website and location.
+
+- **Account Deletion:** Users can delete their account.
+
+- **Password Management:** Users can change or reset their password.
+
+### Blog Posts:
+
+- **Create, Read, Delete** functionalities for posts.
+
+- Posts can have images, a title, text content, tags, and a category.
+
+- Uploaded images are stored in Cloudinary through the Django backend.
+
+### Comments and Likes:
+
+- Users can like posts and view posts they have liked on their profile page.
+
+- Users can comment on posts.
+
+### Social Features:
+
+- Users can follow/unfollow others and see followers and following lists.
 
 # Project Management
 
