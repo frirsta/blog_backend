@@ -24,10 +24,11 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
     TokenBlacklistView
 )
-from .views import CurrentUserView, LogoutView
+from .views import CurrentUserView, LogoutView, root_route
 
 
 urlpatterns = [
+    path('', root_route),
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(),
          name='token_obtain_pair'),  # Login

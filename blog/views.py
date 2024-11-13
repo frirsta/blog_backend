@@ -5,6 +5,15 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import CurrentUserSerializer
+from rest_framework.decorators import api_view
+
+
+@api_view()
+def root_route(request):
+    return Response({
+        "message": "Welcome to my drf API!"
+    })
+
 
 class CurrentUserView(RetrieveAPIView):
     serializer_class = CurrentUserSerializer
@@ -12,7 +21,6 @@ class CurrentUserView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
 
 
 class LogoutView(APIView):
@@ -29,7 +37,7 @@ class LogoutView(APIView):
                 # Blacklist the refresh token
                 token = RefreshToken(refresh_token)
                 token.blacklist()
-                
+
                 return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
