@@ -61,6 +61,14 @@ class PostSerializer(serializers.ModelSerializer):
             return likes.id if likes else None
         return None
 
+    def get_image(self, obj):
+        if obj.image:
+            image_url = obj.image.url
+            if image_url.startswith("image/upload/"):
+                return image_url.replace("image/upload/", "")
+            return image_url
+        return None
+
     def validate_image(self, value):
         if not value:
             raise serializers.ValidationError("This field is required.")
