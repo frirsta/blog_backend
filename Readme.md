@@ -236,3 +236,168 @@ Create a .env file in the root directory with the following keys:
 
    - URL: /comments/<int:pk>/
    - Method: GET, PUT, PATCH, and DELETE
+
+# JWT Authentication
+
+The project uses JWT-based authentication to manage user sessions. This is implemented using Django REST Framework SimpleJWT, but with enhanced customizations to ensure security and proper user management.
+
+### Key Customizations:
+
+1. Custom JWT Authentication Class
+
+- We use a custom CustomJWTAuthentication class that extends the default JWTAuthentication from SimpleJWT.
+- This class checks if the user associated with the token is active before granting access.
+- If a user account is disabled, a 403 Permission
+- Denied error is returned with the message "User account is disabled."
+
+2. Active User Check (IsActiveUser Permission)
+
+- A custom permission class IsActiveUser has been added.
+- This permission ensures that only active users can access the API endpoints protected by this permission.
+- This provides an additional layer of protection, even if the user’s token is valid but the account has been deactivated.
+
+#### Configuration
+
+In settings.py, the authentication and permission classes have been updated as follows:
+
+```python
+ REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'blog.authentication.CustomJWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'blog.permissions.IsActiveUser',
+    ),
+
+}
+```
+
+##### Custom Classes
+
+- CustomJWTAuthentication:
+- Located in blog/authentication.py.
+- Overrides get_user method to check if the user is active.
+
+```python
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.core.exceptions import PermissionDenied
+
+class CustomJWTAuthentication(JWTAuthentication):
+    def get_user(self, validated_token):
+        user = super().get_user(validated_token)
+        if not user.is_active:
+            raise PermissionDenied("User account is disabled.")
+        return user
+```
+
+##### IsActiveUser Permission:
+
+- Located in blog/permissions.py.
+- Ensures the request is made by an active user.
+
+```python
+from django.core.exceptions import PermissionDenied
+from rest_framework.permissions import BasePermission
+
+class IsActiveUser(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_active:
+            raise PermissionDenied("User account is disabled.")
+        return True
+```
+
+# Testing
+
+### Testing the Enhanced Authentication Flow
+
+This section verifies that the enhanced authentication system handles both active and inactive users correctly, and that the logout functionality behaves as expected.
+
+#### Prerequisites:
+
+- You must have a valid access token (`<your_access_token>`) and refresh token (`<your_refresh_token>`).
+
+1. **Scenario 1: Active User Access:**
+
+   - Ensure the user account is active (`user.is_active = True`).
+   - Send a request to the protected endpoint:
+
+     ```bash
+     curl -X GET http://127.0.0.1:8000/current-user/ \
+     -H "Authorization: Bearer <your_access_token>"
+     ```
+
+   - The response should return the user details as expected:
+
+     ```json
+     {
+       "id": 11,
+       "username": "testuser",
+       "email": "",
+       "profile_picture": "http://...",
+       "cover_picture": "http://...",
+       "bio": null,
+       "location": null,
+       "website": null,
+       "first_name": "",
+       "last_name": ""
+     }
+     ```
+
+2. **Scenario 2: Inactive User Access:**
+
+   - Set the user account to inactive in the Django shell:
+
+     ```python
+     user = User.objects.get(username="testuser")
+     user.is_active = False
+     user.save()
+     ```
+
+   - Send the same request as above.
+   - The response should indicate that the user is inactive:
+
+     ```json
+     {
+       "detail": "User account is disabled.",
+       "code": "user_inactive"
+     }
+     ```
+
+3. **Scenario 3: Successful Logout:**
+
+   - Ensure an active user can successfully log out:
+
+     ```bash
+     curl -X POST http://127.0.0.1:8000/logout/ \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer <your_access_token>" \
+     -d '{"refresh": "<your_refresh_token>"}'
+     ```
+
+   - The response should confirm successful logout:
+
+     ```json
+     {
+       "detail": "Successfully logged out."
+     }
+     ```
+
+4. **Scenario 4: Logout Attempt by Inactive User:**
+
+   - Try logging out with an inactive user’s refresh token:
+
+     ```bash
+     curl -X POST http://127.0.0.1:8000/logout/ \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer <your_access_token>" \
+     -d '{"refresh": "<your_refresh_token>"}'
+     ```
+
+   - The response should indicate that the user account is disabled:
+
+     ```json
+     {
+       "detail": "User account is disabled."
+     }
+     ```
