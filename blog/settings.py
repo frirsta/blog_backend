@@ -70,21 +70,24 @@ cloudinary.config(
     api_secret=config('CLOUDINARY_API_SECRET')
 )
 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'blog.authentication.CustomJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'blog.permissions.IsActiveUser',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
 }
+
 if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += (
         'rest_framework.renderers.BrowsableAPIRenderer',
     )
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),

@@ -12,11 +12,10 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
 class IsActiveUser(BasePermission):
     """
-    Custom permission to check if the user is active.
+    Allows access only to active users.
     """
 
     def has_permission(self, request, view):
-        user = request.user
-        if not user.is_active:
+        if not request.user.is_active:
             raise PermissionDenied("User account is disabled.")
         return True
