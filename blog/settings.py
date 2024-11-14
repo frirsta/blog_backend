@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'follows',
     'likes',
     'comments',
+    'blog',
 ]
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 

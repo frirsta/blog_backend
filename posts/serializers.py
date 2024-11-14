@@ -19,6 +19,7 @@ class PostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     owner_id = serializers.ReadOnlyField(source='user.id')
     is_owner = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     likes_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
