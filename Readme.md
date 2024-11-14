@@ -9,6 +9,9 @@ This repository contains the backend of the blog project built with Django REST 
 - [Project Management](#project-management)
 - [Technologies](#technologies)
 - [Setup](#setup)
+- [API Endpoints](#api-endpoints)
+- [JWT Authentication](#jwt-authentication)
+- [Testing](#testing)
 
 [**Live Link**](https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com/login)
 
@@ -99,13 +102,21 @@ I have used Github issues and Github project board for project management.
 
 - Set up a virtual environment:
 
-  > Source activate bin/local/myenv
+  ```bash
+  Source activate bin/local/myenv
+  ```
 
 - Install required Python packages:
-  > pip install -r requirements.txt
+
+  ```bash
+   pip install -r requirements.txt
+  ```
 
 3. Install frontend dependencies:
-   > npm install
+
+   ```bash
+   npm install
+   ```
 
 ## Environment Variables
 
@@ -319,7 +330,7 @@ This section verifies that the enhanced authentication system handles both activ
 
 1. **Scenario 1: Active User Access:**
 
-   - Ensure the user account is active (`user.is_active = True`).
+   - Verify that the user account is active (user.is_active = True).
    - Send a request to the protected endpoint:
 
      ```bash
@@ -346,7 +357,7 @@ This section verifies that the enhanced authentication system handles both activ
 
 2. **Scenario 2: Inactive User Access:**
 
-   - Set the user account to inactive in the Django shell:
+   - Mark the user account as inactive in the Django shell:
 
      ```python
      user = User.objects.get(username="testuser")
@@ -401,3 +412,5 @@ This section verifies that the enhanced authentication system handles both activ
        "detail": "User account is disabled."
      }
      ```
+
+> Note: If any unexpected issues occur during testing, ensure that the backend server is running, and the tokens are valid and not expired.
