@@ -19,7 +19,6 @@ class PostSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     owner_id = serializers.ReadOnlyField(source='user.id')
     is_owner = serializers.SerializerMethodField()
-    image = serializers.SerializerMethodField()
     profile_picture = serializers.SerializerMethodField()
     likes_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
@@ -59,14 +58,6 @@ class PostSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             likes = Like.objects.filter(user=user, post=obj).first()
             return likes.id if likes else None
-        return None
-
-    def get_image(self, obj):
-        if obj.image:
-            image_url = obj.image.url
-            if image_url.startswith("image/upload/"):
-                return image_url.replace("image/upload/", "")
-            return image_url
         return None
 
     def validate_image(self, value):
