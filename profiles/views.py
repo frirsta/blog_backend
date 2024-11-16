@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
-from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count
 from django.utils.encoding import force_bytes, force_str
@@ -18,22 +17,17 @@ from .models import Profile
 
 
 class UserRegistrationView(generics.CreateAPIView):
+    """
+    API view to register a new user.
+    """
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
-
-            refresh = RefreshToken.for_user(user)
-            access_token = refresh.access_token
-
-            return Response({
-                "detail": "User created successfully.",
-                "refresh": str(refresh),  # JWT refresh token
-                "access": str(access_token),  # JWT access token
-            }, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response({"detail": "User created successfully."}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
