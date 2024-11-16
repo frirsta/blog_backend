@@ -148,105 +148,141 @@ Create a .env file in the root directory with the following keys:
 
 # API Endpoints
 
-## Profiles API Endpoints
+## Authentication
 
-1. User Registration
+### JWT Authentication
 
-   - URL: /profiles/register/
-   - Method: POST
+- **Login**:
+  - **URL**: `/api/token/`
+  - **Method**: POST
+  - **Description**: Obtain JWT access and refresh tokens by providing valid user credentials.
 
-2. Profile List
+- **Refresh Token**:
+  - **URL**: `/api/token/refresh/`
+  - **Method**: POST
+  - **Description**: Refresh the access token using the refresh token.
 
-   - URL: /profiles/
-   - Method: GET
+- **Verify Token**:
+  - **URL**: `/api/token/verify/`
+  - **Method**: POST
+  - **Description**: Verify if a given token is valid.
 
-3. Profile Detail
+- **Logout**:
+  - **URL**: `/api/token/blacklist/`
+  - **Method**: POST
+  - **Description**: Blacklist the refresh token to log the user out.
 
-   - URL: /profiles/<int:pk>/
-   - Method: GET, PUT, DELETE
+## General Endpoints
 
-4. Password Reset
+- **Root**:
+  - **URL**: `/`
+  - **Method**: GET
+  - **Description**: Provides a welcome message and link to API documentation.
 
-   - URL: /profiles/password-reset/
-   - Method: POST
+- **Documentation**:
+  - **URL**: `/docs/`
+  - **Method**: GET
+  - **Description**: Provides documentation for the API endpoints.
 
-5. Password Reset Confirmation
+- **Current User**:
+  - **URL**: `/current-user/`
+  - **Method**: GET
+  - **Description**: Retrieve details for the currently authenticated user.
 
-   - URL: /profiles/password-reset-confirm/
-   - Method: POST
+## Profile Endpoints
 
-6. Change Password
+- **User Registration**:
+  - **URL**: `/profiles/register/`
+  - **Method**: POST
+  - **Description**: Register a new user account.
 
-   - URL: /profiles/change-password/
-   - Method: POST
+- **Profile List**:
+  - **URL**: `/profiles/`
+  - **Method**: GET
+  - **Description**: Retrieve a list of all user profiles.
 
-7. Current User Profile
+- **Profile Details**:
+  - **URL**: `/profiles/<int:pk>/`
+  - **Method**: GET, PUT, DELETE
+  - **Description**: Retrieve, update, or delete a specific user profile.
 
-   - URL: /profiles/current/
-   - Method: GET
+- **Password Reset**:
+  - **URL**: `/profiles/reset_password/`
+  - **Method**: POST
+  - **Description**: Send a password reset email to the specified email address.
 
-### Posts API Endpoints
+- **Password Reset Confirm**:
+  - **URL**: `/profiles/reset_password_confirm/`
+  - **Method**: POST
+  - **Description**: Confirm a new password for the user.
 
-1. Post List & Create
+- **Change Password**:
+  - **URL**: `/profiles/change_password/`
+  - **Method**: POST
+  - **Description**: Change the password for the authenticated user.
 
-   - URL: /posts/
-   - Method: GET, POST
+## Post Endpoints
 
-2. Post Detail
+- **Post List Create**:
+  - **URL**: `/posts/`
+  - **Method**: GET, POST
+  - **Description**: Retrieve a list of all blog posts or create a new post.
 
-   - URL: /posts/<int:pk>/
-   - Method: GET, PUT, DELETE
+- **Post Details**:
+  - **URL**: `/posts/<int:pk>/`
+  - **Method**: GET, PUT, DELETE
+  - **Description**: Retrieve, update, or delete a specific blog post.
 
-3. User's Posts
+- **User Posts**:
+  - **URL**: `/posts/user/<int:user_id>/`
+  - **Method**: GET
+  - **Description**: Retrieve a list of blog posts by a specific user.
 
-   - URL: /posts/user/<int:user_id>/
-   - Method: GET
+- **Category List**:
+  - **URL**: `/posts/categories/`
+  - **Method**: GET
+  - **Description**: Retrieve a list of all blog post categories.
 
-4. Category List
+- **Tag List**:
+  - **URL**: `/posts/tags/`
+  - **Method**: GET
+  - **Description**: Retrieve a list of all blog post tags.
 
-   - URL: /posts/category/
-   - Method: GET
+## Like Endpoints
 
-5. Tag List
+- **List Create Likes**:
+  - **URL**: `/likes/`
+  - **Method**: GET, POST
+  - **Description**: Retrieve a list of all likes or create a new like.
 
-   - URL: /posts/tags/
-   - Method: GET
+- **Like Details**:
+  - **URL**: `/likes/<int:pk>/`
+  - **Method**: GET, DELETE
+  - **Description**: Retrieve or delete a specific like.
 
-### Likes API Endpoints
+## Follow Endpoints
 
-1. List & Create Likes
+- **Create Follow**:
+  - **URL**: `/follows/`
+  - **Method**: POST
+  - **Description**: Follow a user.
 
-   - URL: /likes/
-   - Method: GET, POST
+- **Delete Follow**:
+  - **URL**: `/follows/<int:pk>/`
+  - **Method**: DELETE
+  - **Description**: Unfollow a user.
 
-2. Like Detail & Delete
+## Comment Endpoints
 
-   - URL: /likes/<int:pk>/
-   - Method: GET, DELETE
+- **List Create Comments**:
+  - **URL**: `/comments/`
+  - **Method**: GET, POST
+  - **Description**: Retrieve a list of all comments or create a new comment.
 
-### Follows API Endpoints
-
-1. Create Follow
-
-   - URL: /follows/
-   - Method: POST
-
-2. Unfollow User
-
-   - URL: /follows/<int:pk>/
-   - Method: DELETE
-
-### Comments API Endpoints
-
-1. List and Create Comments
-
-   - URL: /comments/
-   - Method: GET and POST
-
-2. Comment Detail, Update, and Delete
-
-   - URL: /comments/<int:pk>/
-   - Method: GET, PUT, PATCH, and DELETE
+- **Comment Details**:
+  - **URL**: `/comments/<int:pk>/`
+  - **Method**: GET, PUT, DELETE
+  - **Description**: Retrieve, update, or delete a specific comment.
 
 # JWT Authentication
 
@@ -258,8 +294,7 @@ The project uses JWT-based authentication to manage user sessions. This is imple
 
 - We use a custom CustomJWTAuthentication class that extends the default JWTAuthentication from SimpleJWT.
 - This class checks if the user associated with the token is active before granting access.
-- If a user account is disabled, a 403 Permission
-- Denied error is returned with the message "User account is disabled."
+- If a user account is disabled, a 403 PermissionDenied error is returned with the message "User account is disabled."
 
 2. Active User Check (IsActiveUser Permission)
 

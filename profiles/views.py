@@ -145,11 +145,3 @@ class ChangePasswordView(APIView):
         user.save()
 
         return Response({"detail": "Password has been updated successfully."}, status=status.HTTP_200_OK)
-
-
-class CurrentUserProfileView(generics.RetrieveAPIView):
-    serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user.profile
