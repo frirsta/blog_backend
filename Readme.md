@@ -153,16 +153,19 @@ Create a .env file in the root directory with the following keys:
 ### JWT Authentication
 
 - **Login**:
+
   - **URL**: `/api/token/`
   - **Method**: POST
   - **Description**: Obtain JWT access and refresh tokens by providing valid user credentials.
 
 - **Refresh Token**:
+
   - **URL**: `/api/token/refresh/`
   - **Method**: POST
   - **Description**: Refresh the access token using the refresh token.
 
 - **Verify Token**:
+
   - **URL**: `/api/token/verify/`
   - **Method**: POST
   - **Description**: Verify if a given token is valid.
@@ -175,11 +178,13 @@ Create a .env file in the root directory with the following keys:
 ## General Endpoints
 
 - **Root**:
+
   - **URL**: `/`
   - **Method**: GET
   - **Description**: Provides a welcome message and link to API documentation.
 
 - **Documentation**:
+
   - **URL**: `/docs/`
   - **Method**: GET
   - **Description**: Provides documentation for the API endpoints.
@@ -192,26 +197,31 @@ Create a .env file in the root directory with the following keys:
 ## Profile Endpoints
 
 - **User Registration**:
+
   - **URL**: `/profiles/register/`
   - **Method**: POST
   - **Description**: Register a new user account.
 
 - **Profile List**:
+
   - **URL**: `/profiles/`
   - **Method**: GET
   - **Description**: Retrieve a list of all user profiles.
 
 - **Profile Details**:
+
   - **URL**: `/profiles/<int:pk>/`
   - **Method**: GET, PUT, DELETE
   - **Description**: Retrieve, update, or delete a specific user profile.
 
 - **Password Reset**:
+
   - **URL**: `/profiles/reset_password/`
   - **Method**: POST
   - **Description**: Send a password reset email to the specified email address.
 
 - **Password Reset Confirm**:
+
   - **URL**: `/profiles/reset_password_confirm/`
   - **Method**: POST
   - **Description**: Confirm a new password for the user.
@@ -224,21 +234,25 @@ Create a .env file in the root directory with the following keys:
 ## Post Endpoints
 
 - **Post List Create**:
+
   - **URL**: `/posts/`
   - **Method**: GET, POST
   - **Description**: Retrieve a list of all blog posts or create a new post.
 
 - **Post Details**:
+
   - **URL**: `/posts/<int:pk>/`
   - **Method**: GET, PUT, DELETE
   - **Description**: Retrieve, update, or delete a specific blog post.
 
 - **User Posts**:
+
   - **URL**: `/posts/user/<int:user_id>/`
   - **Method**: GET
   - **Description**: Retrieve a list of blog posts by a specific user.
 
 - **Category List**:
+
   - **URL**: `/posts/categories/`
   - **Method**: GET
   - **Description**: Retrieve a list of all blog post categories.
@@ -251,6 +265,7 @@ Create a .env file in the root directory with the following keys:
 ## Like Endpoints
 
 - **List Create Likes**:
+
   - **URL**: `/likes/`
   - **Method**: GET, POST
   - **Description**: Retrieve a list of all likes or create a new like.
@@ -263,6 +278,7 @@ Create a .env file in the root directory with the following keys:
 ## Follow Endpoints
 
 - **Create Follow**:
+
   - **URL**: `/follows/`
   - **Method**: POST
   - **Description**: Follow a user.
@@ -275,6 +291,7 @@ Create a .env file in the root directory with the following keys:
 ## Comment Endpoints
 
 - **List Create Comments**:
+
   - **URL**: `/comments/`
   - **Method**: GET, POST
   - **Description**: Retrieve a list of all comments or create a new comment.
@@ -292,14 +309,13 @@ The project uses JWT-based authentication to manage user sessions. This is imple
 
 1. Custom JWT Authentication Class
 
-- We use a custom CustomJWTAuthentication class that extends the default JWTAuthentication from SimpleJWT.
+- A custom CustomJWTAuthentication class that extends the default JWTAuthentication from SimpleJWT.
 - This class checks if the user associated with the token is active before granting access.
 - If a user account is disabled, a 403 PermissionDenied error is returned with the message "User account is disabled."
 
 2. Active User Check (IsActiveUser Permission)
 
-- A custom permission class IsActiveUser has been added.
-- This permission ensures that only active users can access the API endpoints protected by this permission.
+- A custom permission class `IsActiveUser` ensures that only active users can access the API endpoints protected by this permission.
 - This provides an additional layer of protection, even if the user’s token is valid but the account has been deactivated.
 
 #### Configuration
@@ -352,6 +368,11 @@ class IsActiveUser(BasePermission):
             raise PermissionDenied("User account is disabled.")
         return True
 ```
+
+#### Updated Registration Flow
+
+- During user registration, the backend no longer issues tokens directly using the `for_user` method due to a security vulnerability in versions of `djangorestframework-simplejwt` <= 5.3.1.
+- Users register through the `/profiles/register/` endpoint, and the frontend handles logging in the user separately after a successful registration by making a login request to obtain JWT tokens.
 
 # Testing
 
@@ -449,3 +470,7 @@ This section verifies that the enhanced authentication system handles both activ
      ```
 
 > Note: If any unexpected issues occur during testing, ensure that the backend server is running, and the tokens are valid and not expired.
+
+### Removing Vulnerable Code
+
+- Security Update: The vulnerable `for_user` method was removed to avoid potential information disclosure vulnerabilities. The login flow now uses a separate request made from the frontend, which ensures that inactive users cannot access system resources with JWT tokens.
