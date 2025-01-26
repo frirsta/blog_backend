@@ -1,4 +1,4 @@
-#!/Users/frirstaalikarem/drf_blog_backend/blog_backend/myenv/bin/python3.12
+#!/Users/frirstaalikarem/blogify_backend/blog_backend/myenv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
