@@ -33,7 +33,6 @@ SECRET_KEY = config('SECRET_KEY')
 # settings.py
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-
 ALLOWED_HOSTS = ['frirsta-blogify-8b8b9ff7f8c5.herokuapp.com',
                  'localhost', '127.0.0.1']
 
