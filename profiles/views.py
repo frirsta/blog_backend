@@ -83,8 +83,7 @@ class PasswordResetAPIView(generics.GenericAPIView):
         if user:
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_url = f"https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com/password-reset-confirm/{
-                uid}/{token}/"
+            reset_url = {"https://frirstablogify.netlify.app/password-reset-confirm/{uid}/{token}/"}
 
             context = {
                 'username': user.username,
