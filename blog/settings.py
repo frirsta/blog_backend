@@ -112,13 +112,13 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React development server
     "http://127.0.0.1:3000",  # Localhost with IP address
-    "https://frirstablogify.netlify.app",  # Production URL
+    "https://blogify-frirsta.vercel.app",  # Production URL
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",  # React development server
-    "https://frirstablogify.netlify.app",  # Production URL
+    "https://blogify-frirsta.vercel.app",  # Production URL
 ]
 
 ROOT_URLCONF = 'blog.urls'
