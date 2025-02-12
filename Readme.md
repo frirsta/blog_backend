@@ -13,9 +13,9 @@ This repository contains the backend of the blog project built with Django REST 
 - [JWT Authentication](#jwt-authentication)
 - [Testing](#testing)
 
-[**Live Front-End Link**](https://frirsta-blog-frontend-bfdde69332c7.herokuapp.com/login)
+[**Live Front-End Link**](https://blogify-frirsta.vercel.app/login)
 
-[**Back-End API Deployment**](https://frirsta-blog-53010ec1265c.herokuapp.com/)
+[**Back-End API Deployment**](https://frirsta-blogify-8b8b9ff7f8c5.herokuapp.com/)
 
 [**Frontend Repository**](https://github.com/frirsta/blog_frontend)
 
